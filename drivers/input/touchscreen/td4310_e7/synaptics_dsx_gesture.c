@@ -389,46 +389,46 @@ struct synaptics_rmi4_udg_handle {
 };
 
 static struct device_attribute attrs[] = {
-	__ATTR(engine_enable, (S_IWUSR | S_IWGRP),
+	__ATTR(engine_enable, 0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_engine_enable_store),
-	__ATTR(detection_enable, (S_IWUSR | S_IWGRP),
+	__ATTR(detection_enable, 0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_detection_enable_store),
-	__ATTR(detection_score, S_IRUGO,
+	__ATTR(detection_score, 0444,
 			udg_sysfs_detection_score_show,
 			synaptics_rmi4_store_error),
-	__ATTR(detection_index, S_IRUGO,
+	__ATTR(detection_index, 0444,
 			udg_sysfs_detection_index_show,
 			synaptics_rmi4_store_error),
-	__ATTR(registration_enable, (S_IWUSR | S_IWGRP),
+	__ATTR(registration_enable, 0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_registration_enable_store),
-	__ATTR(registration_begin, (S_IWUSR | S_IWGRP),
+	__ATTR(registration_begin, (0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_registration_begin_store),
-	__ATTR(registration_status, S_IRUGO,
+	__ATTR(registration_status, 0444,
 			udg_sysfs_registration_status_show,
 			synaptics_rmi4_store_error),
-	__ATTR(template_size, S_IRUGO,
+	__ATTR(template_size, 0444,
 			udg_sysfs_template_size_show,
 			synaptics_rmi4_store_error),
-	__ATTR(template_max_index, S_IRUGO,
+	__ATTR(template_max_index, 0444,
 			udg_sysfs_template_max_index_show,
 			synaptics_rmi4_store_error),
-	__ATTR(template_detection, S_IRUGO,
+	__ATTR(template_detection, 0444,
 			udg_sysfs_template_detection_show,
 			synaptics_rmi4_store_error),
-	__ATTR(template_index, (S_IWUSR | S_IWGRP),
+	__ATTR(template_index, 0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_template_index_store),
-	__ATTR(template_valid, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(template_valid, 0664,
 			udg_sysfs_template_valid_show,
 			udg_sysfs_template_valid_store),
-	__ATTR(template_clear, (S_IWUSR | S_IWGRP),
+	__ATTR(template_clear, 0220,
 			synaptics_rmi4_show_error,
 			udg_sysfs_template_clear_store),
-	__ATTR(trace_size, S_IRUGO,
+	__ATTR(trace_size, 0444,
 			udg_sysfs_trace_size_show,
 			synaptics_rmi4_store_error),
 };
@@ -436,7 +436,7 @@ static struct device_attribute attrs[] = {
 static struct bin_attribute template_data = {
 	.attr = {
 		.name = "template_data",
-		.mode = (S_IRUGO | S_IWUSR | S_IWGRP),
+		.mode = 0664,
 	},
 	.size = 0,
 	.read = udg_sysfs_template_data_show,
@@ -446,7 +446,7 @@ static struct bin_attribute template_data = {
 static struct bin_attribute trace_data = {
 	.attr = {
 		.name = "trace_data",
-		.mode = S_IRUGO,
+		.mode = 0444,
 	},
 	.size = 0,
 	.read = udg_sysfs_trace_data_show,
@@ -454,22 +454,22 @@ static struct bin_attribute trace_data = {
 };
 
 static struct device_attribute params[] = {
-	__ATTR(template_displacement, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(template_displacement, 0664,
 			udg_sysfs_template_displacement_show,
 			udg_sysfs_template_displacement_store),
-	__ATTR(rotation_invariance, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(rotation_invariance, 0664,
 			udg_sysfs_rotation_invariance_show,
 			udg_sysfs_rotation_invariance_store),
-	__ATTR(scale_invariance, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(scale_invariance, 0664,
 			udg_sysfs_scale_invariance_show,
 			udg_sysfs_scale_invariance_store),
-	__ATTR(threshold_factor, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(threshold_factor, 0664,
 			udg_sysfs_threshold_factor_show,
 			udg_sysfs_threshold_factor_store),
-	__ATTR(match_metric_threshold, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(match_metric_threshold, 0664,
 			udg_sysfs_match_metric_threshold_show,
 			udg_sysfs_match_metric_threshold_store),
-	__ATTR(max_inter_stroke_time, (S_IRUGO | S_IWUSR | S_IWGRP),
+	__ATTR(max_inter_stroke_time, 0664,
 			udg_sysfs_max_inter_stroke_time_show,
 			udg_sysfs_max_inter_stroke_time_store),
 };
@@ -490,7 +490,7 @@ static ssize_t udg_sysfs_engine_enable_store(struct device *dev,
 	bool enable;
 	unsigned int input;
 
-	if (sscanf(buf, "%u", &input) != 1)
+	if (kstrtouint(buf, 10, &input) != 1)
 		return -EINVAL;
 
 	if (input == 1)
@@ -514,7 +514,7 @@ static ssize_t udg_sysfs_detection_enable_store(struct device *dev,
 	bool enable;
 	unsigned int input;
 
-	if (sscanf(buf, "%u", &input) != 1)
+	if (kstrtouint(buf, 10, &input) != 1)
 		return -EINVAL;
 
 	if (input == 1)
@@ -554,7 +554,7 @@ static ssize_t udg_sysfs_registration_enable_store(struct device *dev,
 	struct synaptics_rmi4_f12_control_41 control_41;
 	struct synaptics_rmi4_data *rmi4_data = udg->rmi4_data;
 
-	if (sscanf(buf, "%u", &input) != 1)
+	if (kstrtouint(buf, 10, &input) != 1)
 		return -EINVAL;
 
 	if (input == 1)
@@ -633,7 +633,7 @@ static ssize_t udg_sysfs_registration_begin_store(struct device *dev,
 	struct synaptics_rmi4_f12_control_41 control_41;
 	struct synaptics_rmi4_data *rmi4_data = udg->rmi4_data;
 
-	if (sscanf(buf, "%u", &input) != 1)
+	if (kstrtouint(buf, 10, &input) != 1)
 		return -EINVAL;
 
 	if (input == 1)
@@ -821,7 +821,7 @@ static ssize_t udg_sysfs_template_clear_store(struct device *dev,
 	const char cmd[] = {'0', 0};
 	struct synaptics_rmi4_data *rmi4_data = udg->rmi4_data;
 
-	if (sscanf(buf, "%u", &input) != 1)
+	if (kstrtouint(buf, 10, &input) != 1)
 		return -EINVAL;
 
 	if (input != 1)
@@ -906,9 +906,8 @@ static ssize_t udg_sysfs_trace_data_show(struct file *data_file,
 				"%s: Failed to read trace X data\n",
 				__func__);
 		return retval;
-	} else {
-		index += udg->trace_size * 2;
 	}
+	index += udg->trace_size * 2;
 
 	retval = synaptics_rmi4_reg_read(rmi4_data,
 			udg->addr.trace_y,
@@ -919,9 +918,8 @@ static ssize_t udg_sysfs_trace_data_show(struct file *data_file,
 				"%s: Failed to read trace Y data\n",
 				__func__);
 		return retval;
-	} else {
-		index += udg->trace_size * 2;
 	}
+	index += udg->trace_size * 2;
 
 	retval = synaptics_rmi4_reg_read(rmi4_data,
 			udg->addr.trace_segment,
@@ -2185,8 +2183,6 @@ static void synaptics_rmi4_udg_remove(struct synaptics_rmi4_data *rmi4_data)
 
 exit:
 	complete(&udg_remove_complete);
-
-	return;
 }
 
 static void synaptics_rmi4_udg_reset(struct synaptics_rmi4_data *rmi4_data)
@@ -2202,8 +2198,6 @@ static void synaptics_rmi4_udg_reset(struct synaptics_rmi4_data *rmi4_data)
 	udg_write_template_data();
 	udg_write_valid_data();
 #endif
-
-	return;
 }
 
 static void synaptics_rmi4_udg_reinit(struct synaptics_rmi4_data *rmi4_data)
@@ -2216,8 +2210,6 @@ static void synaptics_rmi4_udg_reinit(struct synaptics_rmi4_data *rmi4_data)
 	udg_write_template_data();
 	udg_write_valid_data();
 #endif
-
-	return;
 }
 
 static void synaptics_rmi4_udg_e_suspend(struct synaptics_rmi4_data *rmi4_data)
@@ -2231,8 +2223,6 @@ static void synaptics_rmi4_udg_e_suspend(struct synaptics_rmi4_data *rmi4_data)
 
 	udg_engine_enable(true);
 	udg_detection_enable(true);
-
-	return;
 }
 
 static void synaptics_rmi4_udg_suspend(struct synaptics_rmi4_data *rmi4_data)
@@ -2246,8 +2236,6 @@ static void synaptics_rmi4_udg_suspend(struct synaptics_rmi4_data *rmi4_data)
 
 	udg_engine_enable(true);
 	udg_detection_enable(true);
-
-	return;
 }
 
 static void synaptics_rmi4_udg_resume(struct synaptics_rmi4_data *rmi4_data)
@@ -2257,8 +2245,6 @@ static void synaptics_rmi4_udg_resume(struct synaptics_rmi4_data *rmi4_data)
 
 	disable_irq_wake(rmi4_data->irq);
 	udg_detection_enable(false);
-
-	return;
 }
 
 static void synaptics_rmi4_udg_l_resume(struct synaptics_rmi4_data *rmi4_data)
@@ -2268,8 +2254,6 @@ static void synaptics_rmi4_udg_l_resume(struct synaptics_rmi4_data *rmi4_data)
 
 	disable_irq_wake(rmi4_data->irq);
 	udg_detection_enable(false);
-
-	return;
 }
 
 static struct synaptics_rmi4_exp_fn gesture_module = {
@@ -2297,8 +2281,6 @@ static void __exit rmi4_gesture_module_exit(void)
 	synaptics_rmi4_new_function(&gesture_module, false);
 
 	wait_for_completion(&udg_remove_complete);
-
-	return;
 }
 
 module_init(rmi4_gesture_module_init);
