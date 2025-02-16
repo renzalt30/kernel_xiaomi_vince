@@ -551,6 +551,4 @@ static inline void hstoba(unsigned char *dest, unsigned short src)
 	dest[1] = src / 0x100;
 }
 
-extern int get_tddi_lockdown_data(unsigned char *lockdown_data, unsigned short leng);
-
 #endif

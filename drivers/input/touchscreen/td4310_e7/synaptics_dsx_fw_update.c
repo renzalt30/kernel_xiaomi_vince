@@ -851,6 +851,7 @@ static struct device_attribute attrs[] = {
 static struct synaptics_rmi4_fwu_handle *fwu;
 
 #if defined (SYNAPTICS_LOCK_DOWN_INFO)
+#define CTP_PROC_LOCKDOWN_FILE "tp_lockdown_info"
 static struct proc_dir_entry *ctp_lockdown_status_proc = NULL;
 static char tp_lockdown_info[128];
 
