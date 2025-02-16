@@ -157,7 +157,6 @@ extern int get_tddi_lockdown_data (unsigned char *lockdown_data, unsigned short 
 static int synaptics_rmi4_check_status (struct synaptics_rmi4_data *rmi4_data,
 		bool *was_in_bl_mode);
 static int synaptics_rmi4_free_fingers (struct synaptics_rmi4_data *rmi4_data);
-static void synaptics_rmi4_set_configured(struct synaptics_rmi4_data *rmi4_data);
 static int synaptics_rmi4_reset_device (struct synaptics_rmi4_data *rmi4_data,
 		bool rebuild);
 
@@ -1754,7 +1753,7 @@ static int synaptics_rmi4_sensor_report (struct synaptics_rmi4_data *rmi4_data,
 		dev_err (rmi4_data->pdev->dev.parent,
 				"%s: Failed to read interrupt status\n",
 				__func__);
-		return;
+		goto exit;
 	}
 
 	rmi4_data->status.data[0] = data[0];
@@ -2037,7 +2036,7 @@ static int synaptics_rmi4_f11_init (struct synaptics_rmi4_data *rmi4_data,
 
 	retval = synaptics_rmi4_reg_read (rmi4_data,
 			fhandler->full_addr.query_base,
-			query_0_5.data,
+			query_0_5->data,
 			sizeof (query_0_5->data));
 	if (retval < 0)
 		goto exit;
@@ -3159,8 +3158,9 @@ rescan_pdt:
 
 				f01found = true;
 
-				retval = synaptics_rmi4_alloc_fh (&fhandler,
-						&rmi_fd, page_number);
+				retval = synaptics_rmi4_alloc_fh(&fhandler,
+					&rmi4_data->rmi_fd,
+					page_number);
 				if (retval < 0) {
 					dev_err (rmi4_data->pdev->dev.parent,
 							"%s: Failed to alloc for F%d\n",
@@ -3169,8 +3169,9 @@ rescan_pdt:
 					return retval;
 				}
 
-				retval = synaptics_rmi4_f01_init (rmi4_data,
-						fhandler, &rmi_fd, intr_count);
+				retval = synaptics_rmi4_f01_init(rmi4_data,
+					fhandler, &rmi4_data->rmi_fd,
+					intr_count);
 				if (retval < 0)
 					return retval;
 
@@ -3197,8 +3198,9 @@ rescan_pdt:
 				if (rmi4_data->rmi_fd.intr_src_count == 0)
 					break;
 
-				retval = synaptics_rmi4_alloc_fh (&fhandler,
-						&rmi_fd, page_number);
+				retval = synaptics_rmi4_alloc_fh(&fhandler,
+						&rmi4_data->rmi_fd,
+						page_number);
 				if (retval < 0) {
 					dev_err (rmi4_data->pdev->dev.parent,
 							"%s: Failed to alloc for F%d\n",
@@ -3207,8 +3209,9 @@ rescan_pdt:
 					return retval;
 				}
 
-				retval = synaptics_rmi4_f11_init (rmi4_data,
-						fhandler, &rmi_fd, intr_count);
+				retval = synaptics_rmi4_f11_init(rmi4_data,
+					fhandler, &rmi4_data->rmi_fd,
+					intr_count);
 				if (retval < 0)
 					return retval;
 				break;
@@ -3216,8 +3219,9 @@ rescan_pdt:
 				if (rmi4_data->rmi_fd.intr_src_count == 0)
 					break;
 
-				retval = synaptics_rmi4_alloc_fh (&fhandler,
-						&rmi_fd, page_number);
+				retval = synaptics_rmi4_alloc_fh(&fhandler,
+						&rmi4_data->rmi_fd,
+						page_number);
 				if (retval < 0) {
 					dev_err (rmi4_data->pdev->dev.parent,
 							"%s: Failed to alloc for F%d\n",
@@ -3226,8 +3230,9 @@ rescan_pdt:
 					return retval;
 				}
 
-				retval = synaptics_rmi4_f12_init (rmi4_data,
-						fhandler, &rmi_fd, intr_count);
+				retval = synaptics_rmi4_f12_init(rmi4_data,
+					fhandler, &rmi4_data->rmi_fd,
+					intr_count);
 				if (retval < 0)
 					return retval;
 				break;
@@ -3235,8 +3240,9 @@ rescan_pdt:
 				if (rmi4_data->rmi_fd.intr_src_count == 0)
 					break;
 
-				retval = synaptics_rmi4_alloc_fh (&fhandler,
-						&rmi_fd, page_number);
+				retval = synaptics_rmi4_alloc_fh(&fhandler,
+						&rmi4_data->rmi_fd,
+						page_number);
 				if (retval < 0) {
 					dev_err (rmi4_data->pdev->dev.parent,
 							"%s: Failed to alloc for F%d\n",
@@ -3245,8 +3251,9 @@ rescan_pdt:
 					return retval;
 				}
 
-				retval = synaptics_rmi4_f1a_init (rmi4_data,
-						fhandler, &rmi_fd, intr_count);
+				retval = synaptics_rmi4_f1a_init(rmi4_data,
+					fhandler, &rmi4_data->rmi_fd,
+					intr_count);
 				if (retval < 0) {
 #ifdef IGNORE_FN_INIT_FAILURE
 					kfree (fhandler);
@@ -3261,8 +3268,9 @@ rescan_pdt:
 				if (rmi4_data->rmi_fd.intr_src_count == 0)
 					break;
 
-				retval = synaptics_rmi4_alloc_fh (&fhandler,
-						&rmi_fd, page_number);
+				retval = synaptics_rmi4_alloc_fh(&fhandler,
+						&rmi4_data->rmi_fd,
+						page_number);
 				if (retval < 0) {
 					dev_err (rmi4_data->pdev->dev.parent,
 							"%s: Failed to alloc for F%d\n",
