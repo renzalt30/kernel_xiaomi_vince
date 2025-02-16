@@ -4193,7 +4193,7 @@ static int fwu_do_lockdown_v5v6 (void)
 
 	img_ld = (unsigned char *)fwu->img.lockdown.data;
 	if (fwu->has_lockdown_data) {
-		retval = set_tddi_lockdown_data(img_ld,
+		retval = set_tddi_lockdown_data (img_ld,
 				LOCKDOWN_SIZE);
 		if (retval < 0)
 			dev_err (rmi4_data->pdev->dev.parent,

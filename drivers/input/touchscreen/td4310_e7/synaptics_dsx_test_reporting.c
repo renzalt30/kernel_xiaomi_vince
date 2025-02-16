@@ -7455,6 +7455,23 @@ static int synaptics_rmi4_test_init (struct synaptics_rmi4_data *rmi4_data)
 	mutex_init (&f54->status_mutex);
 	f54->status = STATUS_IDLE;
 
+	/*add by zmc 20171011*/
+	if (get_tddi_lockdown_data (lockdown, 20) < 0) {
+			printk ("%s:read lockdown fail\n", __func__);
+		}
+		printk ("lockdown[7]: %d\n", lockdown[7]);
+		if (lockdown[7] == 1) {
+			printk ("%s:HQ-zmc: tianma 6.0\n", __func__);
+			tddi_full_raw_limit_lower = tddi_full_raw_limit_lower_G60;
+			tddi_full_raw_limit_upper = tddi_full_raw_limit_upper_G60;
+		} else if (lockdown[7] == 2) {
+			printk ("%s:HQ-zmc: tianma 5.5\n", __func__);
+			tddi_full_raw_limit_lower = tddi_full_raw_limit_lower_G55;
+			tddi_full_raw_limit_upper = tddi_full_raw_limit_upper_G55;
+		}
+
+	return 0;
+
 exit_sysfs:
 	if (f21)
 		kfree (f21->force_txrx_assignment);
